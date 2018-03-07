@@ -99,13 +99,13 @@ class DrawDialog(QDialog,  Ui_Dialog):
             out_workbook = xlwt.Workbook()
             out_sheet = out_workbook.add_sheet("抽奖结果")
             out_sheet.write(0,  0,  "序号")
-            for c in range(self.plateSheet.ncols):
-                
+            for c in range(self.plateSheet.ncols):                
                 out_sheet.write(0,  c + 1,  self.plateSheet.cell(0,  c).value)
             for i in range(len(self.luckyPlates)):
                 out_sheet.write(i + 1,  0,  i)
+                r = self.luckyPlates[i]
                 for c in range(self.plateSheet.ncols):
-                    out_sheet.write(i + 1,  c + 1,  self.plateSheet.cell(i,  c).value)
+                    out_sheet.write(i + 1,  c + 1,  self.plateSheet.cell(r,  c).value)
             out_workbook.save(out_file_name)
     def drawLuckyPlate(self):
         if "开  始" ==self.buttonDraw.text():
