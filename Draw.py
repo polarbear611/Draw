@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import random
-import xlrd
+import xlrd,  re
 
 class Draw():
     def __init__(self):
@@ -47,6 +47,7 @@ class Draw():
         new_xls.save(new_file)
     
     def modify_plates(self, file_name):
+        from xlutils.copy import copy
         in_workbook = xlrd.open_workbook(file_name)
         in_sheet = in_workbook.sheet_by_index(0)
         out_workbook = copy(in_workbook)

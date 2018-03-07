@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>600</height>
+    <height>733</height>
    </rect>
   </property>
   <property name="font">
@@ -118,23 +118,32 @@
      <x>30</x>
      <y>350</y>
      <width>741</width>
-     <height>231</height>
+     <height>371</height>
     </rect>
    </property>
    <property name="title">
     <string>抽奖结果</string>
    </property>
-   <widget class="QLabel" name="label">
+   <widget class="QLabel" name="labelLuckyPlates">
     <property name="geometry">
      <rect>
       <x>20</x>
       <y>30</y>
       <width>701</width>
-      <height>181</height>
+      <height>321</height>
      </rect>
     </property>
+    <property name="frameShape">
+     <enum>QFrame::Panel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Sunken</enum>
+    </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string>渝BAG993(蓝色)</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
     </property>
    </widget>
   </widget>
