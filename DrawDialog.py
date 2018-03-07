@@ -5,7 +5,7 @@ from Ui_DrawDialog import Ui_Dialog
 from Draw import Draw
 #from DrawThread import DrawThread
 from PyQt5.QtCore import QTimer,  Qt
-import random
+import random, xlrd,  xlwt
 
 class DrawDialog(QDialog,  Ui_Dialog):
     def __init__(self):
@@ -31,8 +31,23 @@ class DrawDialog(QDialog,  Ui_Dialog):
         #self.showFullScreen()
         
     def loadPlateSet(self):
-        self.plateSet = set()
+        self.plateSet = []
         self.luckyPlates = []
+        self.plateSheet = xlrd.open_workbook("报名.xlsx").sheet_by_index(0)
+        for i in range(1,  self.plateSheet.nrows):
+            if self.plateSheet.cell(i,  self.plateSheet.ncols - 1) != "错误车牌":
+                self.plateSet.append(i)
+        self.labelLuckyPlates.setText(str(len(self.plateSet)))
+    
+    def chooseOnePlate(self):
+        plateNumber = random.choice(self.plateSet)
+        try:
+            plate = '{}({})'.format(self.plateSheet.cell(plateNumber,  1).value ,  self.plateSheet.cell(plateNumber,  2).value[0])
+        except TypeError:
+            plate = '{}({})'.format(str(self.plateSheet.cell(plateNumber,  1).value) ,  self.plateSheet.cell(plateNumber,  2).value[0])
+        self.plateSet.remove(plateNumber)
+        self.luckyPlates.append(plateNumber)
+        return plate
 
     def updateLabelLuckyPlate(self,  count,  maxCount):
         self.labelLuckyPlate.setText("重庆高速公路2017安全文明积极参与者抽奖活动（{}/{})".format(count, maxCount))
@@ -52,21 +67,46 @@ class DrawDialog(QDialog,  Ui_Dialog):
         #self.labelLuckyPlates.setText(((self.labelPlate.text() + '\t') * 10 + '\n') * 10)
         self.luckyPlateCount = 0
         self.labelLuckyPlates.setText('')
-        self.timer.start(100)
+        self.timer.start(10)
         
     def updateLabelLuckyPlates(self):
         self.buttonDraw.setEnabled(False)
         if self.luckyPlateCount >= 100:
             self.timer.stop()
+            self.outputLuckyPlates('抽奖结果.xls')
             QMessageBox.warning(self,  '抽奖结束',  "{}个幸运车牌已全部抽出".format(self.maxCount))
+        plate = self.chooseOnePlate()
         if self.luckyPlateCount % 5 == 0 and self.luckyPlateCount > 0:
-            self.labelLuckyPlates.setText(self.labelLuckyPlates.text() + '\n'+ random.choice(self.plates)+'(蓝)')
+            self.labelLuckyPlates.setText(self.labelLuckyPlates.text() + '\n'+ plate)
         elif self.luckyPlateCount == 0:
-             self.labelLuckyPlates.setText(self.labelLuckyPlates.text() + random.choice(self.plates)+'(蓝)')
+             self.labelLuckyPlates.setText(self.labelLuckyPlates.text() + plate)
         else:
-            self.labelLuckyPlates.setText(self.labelLuckyPlates.text() + '\t'+ random.choice(self.plates)+'(蓝)')
+            self.labelLuckyPlates.setText(self.labelLuckyPlates.text() + '\t'+ plate)
         self.luckyPlateCount += 1
-        
+    
+    def outputLuckyPlates(self,  out_file_name):
+        if out_file_name.split('.')[-1] == 'txt':
+            with open(out_file_name,  'w') as f:
+                f.write('{}\t{}\t{}\t{}\n'.format("序号", "编号",  "车牌号",  "车牌颜色"))
+                for i in range(len(self.luckyPlates)):
+                    nrow = self.luckyPlates[i]
+                    serial = i + 1
+                    number = str(int(self.plateSheet.cell(nrow,  0).value)).zfill(4)
+                    plate = self.plateSheet.cell(nrow,  1).value
+                    color = self.plateSheet.cell(nrow,  2).value
+                    f.write('{}\t{}\t{}\t{}\n'.format(serial,  number,  plate,  color))
+        if out_file_name.split('.')[-1] == 'xls':
+            out_workbook = xlwt.Workbook()
+            out_sheet = out_workbook.add_sheet("抽奖结果")
+            out_sheet.write(0,  0,  "序号")
+            for c in range(self.plateSheet.ncols):
+                
+                out_sheet.write(0,  c + 1,  self.plateSheet.cell(0,  c).value)
+            for i in range(len(self.luckyPlates)):
+                out_sheet.write(i + 1,  0,  i)
+                for c in range(self.plateSheet.ncols):
+                    out_sheet.write(i + 1,  c + 1,  self.plateSheet.cell(i,  c).value)
+            out_workbook.save(out_file_name)
     def drawLuckyPlate(self):
         if "开  始" ==self.buttonDraw.text():
             self.buttonDraw.setText("停  止")
@@ -84,4 +124,12 @@ class DrawDialog(QDialog,  Ui_Dialog):
                 QMessageBox.warning(self,  '抽奖结束',  "{}个幸运车牌已全部抽出".format(self.maxCount))
                 self.buttonDraw.setEnabled(False)
         #QMessageBox.warning(self,  'hello',  'world')
+
+if __name__ == "__main__":
+    import sys
+    from PyQt5.QtWidgets import QApplication
+    app = QApplication(sys.argv)
+    drawDialog = DrawDialog()
+    drawDialog.show()
+    sys.exit(app.exec_())
 
