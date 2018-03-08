@@ -106,4 +106,3 @@ ENV/
 *.jpg
 *.png
 ..gitignore.un~
-.gitignore~
