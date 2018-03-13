@@ -100,6 +100,9 @@ ENV/
 # mypy
 .mypy_cache/
 
+*.e4p
+*.e4q
+*.e6t
 *.txt
 *.xls
 *.xlsx

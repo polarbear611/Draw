@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Project SYSTEM "Project-6.0.dtd">
 <!-- eric project file for project Draw -->
-<!-- Saved: 2018-03-07, 11:56:24 -->
+<!-- Saved: 2018-03-08, 16:39:53 -->
 <!-- Copyright (C) 2018 ,  -->
 <Project version="6.0">
   <Language></Language>
@@ -17,8 +17,8 @@
     <Source>DrawDialog.py</Source>
     <Source>DrawThread.py</Source>
     <Source>Ui_DrawDialog.py</Source>
-    <Source>__init__.py</Source>
     <Source>cv_example.py</Source>
+    <Source>excel.py</Source>
     <Source>full_screen.py</Source>
     <Source>main.py</Source>
     <Source>plt.py</Source>

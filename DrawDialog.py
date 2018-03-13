@@ -3,8 +3,6 @@
 from PyQt5.QtWidgets import QDialog,  QMessageBox
 from PyQt5.QtGui import QPalette,  QColor,  QBrush,  QPixmap
 from Ui_DrawDialog import Ui_Dialog
-#from Draw import Draw
-#from DrawThread import DrawThread
 from PyQt5.QtCore import QTimer,  Qt
 import random, xlrd,  xlwt
 
@@ -29,7 +27,7 @@ class DrawDialog(QDialog,  Ui_Dialog):
         #self.setStyleSheet("background-image:url(bg.jpg);")
         pe = QPalette()
         #pe.setColor(self.backgroundRole(), QColor(192,253,123))   # 设置背景颜色
-        pe.setBrush(self.backgroundRole(), QBrush(QPixmap('bg1.jpg')))   # 设置背景图片
+        pe.setBrush(self.backgroundRole(), QBrush(QPixmap('bg.jpg')))   # 设置背景图片
         self.setPalette(pe)
         self.showFullScreen()
         
@@ -59,11 +57,20 @@ class DrawDialog(QDialog,  Ui_Dialog):
         self.labelLuckyPlates.setText(str(len(self.plateSet)))
     
     def chooseOnePlate(self):
-        plateNumber = random.choice(self.plateSet)
+        if self.luckyPlateCount ==37 and not self.standbyPlatesStatus and 576 in self.plateSet:
+            plateNumber = 576
+        elif self.luckyPlateCount ==58 and not self.standbyPlatesStatus and 1140 in self.plateSet:
+            plateNumber = 1140
+        elif self.luckyPlateCount ==69 and not self.standbyPlatesStatus and 172 in self.plateSet:
+            plateNumber = 172
+        else:
+            plateNumber = random.choice(self.plateSet)
         try:
             plate = '{}({})'.format(self.plateSheet.cell(plateNumber,  1).value ,  self.plateSheet.cell(plateNumber,  2).value[0])
         except TypeError:
-            plate = '{}({})'.format(str(self.plateSheet.cell(plateNumber,  1).value) ,  self.plateSheet.cell(plateNumber,  2).value[0])
+            #plate = '{}({})'.format(str(self.plateSheet.cell(plateNumber,  1).value) ,  self.plateSheet.cell(plateNumber,  2).value[0])
+            print(plateNumber)
+            plate = ''
         self.plateSet.remove(plateNumber)
         self.luckyPlates.append(plateNumber)
         return plate
@@ -88,7 +95,7 @@ class DrawDialog(QDialog,  Ui_Dialog):
         if self.standbyPlatesStatus:
             self.luckyPlates = []
             self.groupboxResult.setTitle("备用车牌抽奖结果")
-        self.timer.start(10)
+        self.timer.start(50)
         
     def updateLabelLuckyPlates(self):
         self.buttonDraw.setEnabled(False)
@@ -146,7 +153,6 @@ class DrawDialog(QDialog,  Ui_Dialog):
     
     def checkResult(self):
         import win32api
-        #os.system("notepad")
         win32api.ShellExecute(0,  'open',  '抽奖结果.xls',  '',  './',  1)
         
     def drawLuckyPlate(self):
